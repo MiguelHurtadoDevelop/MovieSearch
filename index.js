@@ -1,6 +1,9 @@
 let paginaActual = 1;
 let estaCargando = false;
 let MostrandoDetalles = false;
+let peliculasArray = []
+let detallesPeliculas = [];
+
 window.onload = function(){
 
     tipo=document.getElementById("tipo");
@@ -12,6 +15,8 @@ window.onload = function(){
 
     titulo = document.getElementById("titulo");
     titulo.addEventListener("keyup", function(e) {
+      peliculasArray = [];
+      detallesPeliculas = [];
       resultado = document.getElementById("resultado");
       resultado.innerHTML = "";
       buscarPeliculas(e);
@@ -24,6 +29,13 @@ window.onload = function(){
           buscarPeliculas();
       }
   });
+
+  crearInforme = document.getElementById("crearInforme");
+  crearInforme.addEventListener("click", crearInforme);
+
+
+
+ 
   
 }
 
@@ -42,7 +54,7 @@ function ajax(url){
           if (this.readyState == 4 && this.status == 200) {
             estaCargando = false;
             mostrarPeliculas(JSON.parse(this.responseText));
-            
+            peliculasToArray(JSON.parse(this.responseText));
           }
       };
       xhttp.open("GET", url, true);
@@ -55,6 +67,7 @@ function buscarDetalles(url){
           if (this.readyState == 4 && this.status == 200) {
             console.log(JSON.parse(this.responseText));
             mostrarDetalles(JSON.parse(this.responseText));
+            
             
           }
       };
@@ -108,18 +121,47 @@ function mostrarDetalles(pelicula){
   resultado.appendChild(div);
 }
 
+function peliculasToArray(peliculas){
+
+  peliculas.Search.forEach(pelicula => {
+
+    peliculasArray.push(pelicula);
+    let url = `https://www.omdbapi.com/?apikey=f64125b5&i=${pelicula.imdbID}`;
+    buscarDetallesToArray(url);
+  });
+}
+
 function mostrarPeliculas(peliculas){
 
   resultado = document.getElementById("resultado");
   
     peliculas.Search.forEach(pelicula => {
+
+      
+
       
         div = document.createElement("div");
         div.className = "pelicula";
         p = document.createElement("p");
         p.innerHTML = pelicula.Title;
         img = document.createElement("img");
-        img.src = pelicula.Poster;
+        img.onload = function() {
+          // Comprobar si la imagen ha cargado correctamente
+          if (this.width + this.height === 0) {
+              this.onerror();
+          }
+        };
+        img.onerror = function() {
+            // Si hay un error al cargar la imagen, establecer una imagen por defecto
+            this.src = 'images/imgError.jpg';
+        };
+        if (pelicula.Poster && pelicula.Poster !== 'N/A') {
+            img.src = pelicula.Poster;
+        } else {
+            // Si no hay una URL de imagen válida, establecer una imagen por defecto
+            img.src = 'images/imgError.jpg';
+        }
+        
 
         div.addEventListener("click", function(e) {
 
@@ -135,6 +177,20 @@ function mostrarPeliculas(peliculas){
 
         div.appendChild(img);
         div.appendChild(p);
+        
         resultado.appendChild(div);
     });
+
+}
+function buscarDetallesToArray(url){
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        let detallePelicula = JSON.parse(this.responseText);
+        detallesPeliculas.push(detallePelicula); // Guardar los detalles de la película en el array
+        console.log(detallesPeliculas);
+      }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.send();
 }
