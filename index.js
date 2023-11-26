@@ -28,17 +28,42 @@ window.onload = function(){
           paginaActual++;
           buscarPeliculas();
       }
-  });
+    });
 
-  crearInforme = document.getElementById("crearInforme");
-  crearInforme.addEventListener("click", crearInforme);
+    crearInforme = document.getElementById("crearInforme");
+    crearInforme.addEventListener("click",Informes );
 
-
-
- 
   
 }
 
+function Informes() {
+  // Ordenar las películas por imdbRating, recaudación y votos
+  let peliculasPorRating = detallesPeliculas.sort((a, b) => {
+    let ratingA = Number(a.imdbRating);
+    let ratingB = Number(b.imdbRating);
+    return ratingA === 'N/A' || isNaN(ratingA) ? 1 : ratingB === 'N/A' || isNaN(ratingB) ? -1 : ratingB - ratingA;
+  });
+
+  let peliculasPorRecaudacion = detallesPeliculas.sort((a, b) => {
+    let boxOfficeA = a.BoxOffice === 'N/A' ? 0 : Number(a.BoxOffice.replace(/[\$,]/g, ""));
+    let boxOfficeB = b.BoxOffice === 'N/A' ? 0 : Number(b.BoxOffice.replace(/[\$,]/g, ""));
+    return boxOfficeA === 0 || isNaN(boxOfficeA) ? 1 : boxOfficeB === 0 || isNaN(boxOfficeB) ? -1 : boxOfficeB - boxOfficeA;
+  });
+
+  let peliculasPorVotos = detallesPeliculas.sort((a, b) => {
+    let votesA = Number(a.imdbVotes.replace(/,/g, ""));
+    let votesB = Number(b.imdbVotes.replace(/,/g, ""));
+    return votesA === 'N/A' || isNaN(votesA) ? 1 : votesB === 'N/A' || isNaN(votesB) ? -1 : votesB - votesA;
+  });
+  // Obtener las 5 primeras películas de cada categoría
+  let topRating = peliculasPorRating.slice(0, 5);
+  let topRecaudacion = peliculasPorRecaudacion.slice(0, 5);
+  let topVotos = peliculasPorVotos.slice(0, 5);
+
+  console.log(topRating);
+  console.log(topRecaudacion);
+  console.log(topVotos);
+}
 
 function buscarPeliculas(e){
     if(e){e.preventDefault();} 
@@ -188,7 +213,7 @@ function buscarDetallesToArray(url){
       if (this.readyState == 4 && this.status == 200) {
         let detallePelicula = JSON.parse(this.responseText);
         detallesPeliculas.push(detallePelicula); // Guardar los detalles de la película en el array
-        console.log(detallesPeliculas);
+        
       }
   };
   xhttp.open("GET", url, true);
