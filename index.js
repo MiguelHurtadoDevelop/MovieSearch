@@ -8,6 +8,8 @@ window.onload = function(){
 
     tipo=document.getElementById("tipo");
     tipo.addEventListener("change", function(e) {
+      
+      paginaActual = 1;
       resultado = document.getElementById("resultado");
       resultado.innerHTML = "";
       buscarPeliculas(e);
@@ -15,6 +17,8 @@ window.onload = function(){
 
     titulo = document.getElementById("titulo");
     titulo.addEventListener("keyup", function(e) {
+      
+      paginaActual = 1;
       peliculasArray = [];
       detallesPeliculas = [];
       resultado = document.getElementById("resultado");
@@ -24,6 +28,7 @@ window.onload = function(){
 
     window.addEventListener('scroll', function() {
       if (!estaCargando && (window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+          
           estaCargando = true;
           paginaActual++;
           buscarPeliculas();
@@ -38,31 +43,85 @@ window.onload = function(){
 
 function Informes() {
   // Ordenar las películas por imdbRating, recaudación y votos
-  let peliculasPorRating = detallesPeliculas.sort((a, b) => {
-    let ratingA = Number(a.imdbRating);
-    let ratingB = Number(b.imdbRating);
-    return ratingA === 'N/A' || isNaN(ratingA) ? 1 : ratingB === 'N/A' || isNaN(ratingB) ? -1 : ratingB - ratingA;
-  });
+  let detallesPeliculasCopiaRating = [...detallesPeliculas];
+let detallesPeliculasCopiaRecaudacion = [...detallesPeliculas];
+let detallesPeliculasCopiaVotos = [...detallesPeliculas];
 
-  let peliculasPorRecaudacion = detallesPeliculas.sort((a, b) => {
-    let boxOfficeA = a.BoxOffice === 'N/A' ? 0 : Number(a.BoxOffice.replace(/[\$,]/g, ""));
-    let boxOfficeB = b.BoxOffice === 'N/A' ? 0 : Number(b.BoxOffice.replace(/[\$,]/g, ""));
-    return boxOfficeA === 0 || isNaN(boxOfficeA) ? 1 : boxOfficeB === 0 || isNaN(boxOfficeB) ? -1 : boxOfficeB - boxOfficeA;
-  });
+// Ordenar por Rating
+let peliculasPorRating = detallesPeliculasCopiaRating.sort((a, b) => {
+  let ratingA = Number(a.imdbRating);
+  let ratingB = Number(b.imdbRating);
+  return ratingA === 'N/A' || isNaN(ratingA) ? 1 : ratingB === 'N/A' || isNaN(ratingB) ? -1 : ratingB - ratingA;
+});
 
-  let peliculasPorVotos = detallesPeliculas.sort((a, b) => {
-    let votesA = Number(a.imdbVotes.replace(/,/g, ""));
-    let votesB = Number(b.imdbVotes.replace(/,/g, ""));
-    return votesA === 'N/A' || isNaN(votesA) ? 1 : votesB === 'N/A' || isNaN(votesB) ? -1 : votesB - votesA;
-  });
+// Ordenar por Recaudación
+let peliculasPorRecaudacion = detallesPeliculasCopiaRecaudacion.sort((a, b) => {
+  const boxOfficeA = parseFloat(a.BoxOffice.replace(/[^0-9.]+/g, '')) || 0;
+  const boxOfficeB = parseFloat(b.BoxOffice.replace(/[^0-9.]+/g, '')) || 0;
+  return boxOfficeB - boxOfficeA;
+});
+
+// Ordenar por Votos
+let peliculasPorVotos = detallesPeliculasCopiaVotos.sort((a, b) => {
+  let votesA = Number(a.imdbVotes.replace(/,/g, ""));
+  let votesB = Number(b.imdbVotes.replace(/,/g, ""));
+  return votesA === 'N/A' || isNaN(votesA) ? 1 : votesB === 'N/A' || isNaN(votesB) ? -1 : votesB - votesA;
+});
+
+
   // Obtener las 5 primeras películas de cada categoría
   let topRating = peliculasPorRating.slice(0, 5);
   let topRecaudacion = peliculasPorRecaudacion.slice(0, 5);
   let topVotos = peliculasPorVotos.slice(0, 5);
+  
+ 
+  mostrarInforme(topRating, topRecaudacion, topVotos);
+}
 
-  console.log(topRating);
-  console.log(topRecaudacion);
-  console.log(topVotos);
+function mostrarInforme(topRating, topRecaudacion, topVotos) {
+  // Crear una función para generar una tabla a partir de un array de películas
+  function crearTabla(peliculas) {
+    let tabla = document.createElement('table');
+
+    // Crear el encabezado de la tabla
+    let encabezado = document.createElement('thead');
+    let filaEncabezado = document.createElement('tr');
+    ['Título', 'Rating', 'Recaudación', 'Votos'].forEach(texto => {
+      let celda = document.createElement('th');
+      celda.textContent = texto;
+      filaEncabezado.appendChild(celda);
+    });
+    encabezado.appendChild(filaEncabezado);
+    tabla.appendChild(encabezado);
+
+    // Crear el cuerpo de la tabla
+    let cuerpo = document.createElement('tbody');
+    peliculas.forEach(pelicula => {
+      let fila = document.createElement('tr');
+      [pelicula.Title, pelicula.imdbRating, pelicula.BoxOffice, pelicula.imdbVotes].forEach(texto => {
+        let celda = document.createElement('td');
+        celda.textContent = texto;
+        fila.appendChild(celda);
+      });
+      cuerpo.appendChild(fila);
+    });
+    tabla.appendChild(cuerpo);
+
+    return tabla;
+  }
+
+  // Crear las tablas
+  let tablaRating = crearTabla(topRating);
+  let tablaRecaudacion = crearTabla(topRecaudacion);
+  let tablaVotos = crearTabla(topVotos);
+
+
+  document.body.innerHTML = '';
+  // Agregar las tablas al documento
+ 
+  document.body.appendChild(tablaRating);
+  document.body.appendChild(tablaRecaudacion);
+  document.body.appendChild(tablaVotos);
 }
 
 function buscarPeliculas(e){
@@ -74,12 +133,16 @@ function buscarPeliculas(e){
 }
 
 function ajax(url){
+  document.getElementById('loader').style.display = 'block';
     var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
             estaCargando = false;
+            
             mostrarPeliculas(JSON.parse(this.responseText));
             peliculasToArray(JSON.parse(this.responseText));
+          }else{
+            document.getElementById('loader').style.display = 'none';
           }
       };
       xhttp.open("GET", url, true);
@@ -87,12 +150,13 @@ function ajax(url){
 }
 
 function buscarDetalles(url){
+  document.getElementById('loader').style.display = 'block';
   var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) {
             console.log(JSON.parse(this.responseText));
             mostrarDetalles(JSON.parse(this.responseText));
-            
+            document.getElementById('loader').style.display = 'none';
             
           }
       };
@@ -125,7 +189,26 @@ function mostrarDetalles(pelicula){
   Plot = document.createElement("p");
   Plot.innerHTML = "Plot: "+pelicula.Plot;
   button = document.createElement("button");
-  button.innerHTML = "Volver";
+  cartel = document.createElement("img");
+  cartel.onload = function() {
+    // Comprobar si la imagen ha cargado correctamente
+    if (this.width + this.height === 0) {
+        this.onerror();
+    }
+  };
+  cartel.onerror = function() {
+      // Si hay un error al cargar la imagen, establecer una imagen por defecto
+      this.src = 'images/imgError.jpg';
+  };
+  if (pelicula.Poster && pelicula.Poster !== 'N/A') {
+      cartel.src = pelicula.Poster;
+  } else {
+      // Si no hay una URL de imagen válida, establecer una imagen por defecto
+      cartel.src = 'images/imgError.jpg';
+  }
+  
+
+  button.innerHTML = "<img src='images/cerrar.svg'>";
 
   button.addEventListener('click', function() {
     MostrandoDetalles = false;
@@ -134,6 +217,7 @@ function mostrarDetalles(pelicula){
   });
   
 
+  div.appendChild(cartel);
   div.appendChild(Actors);
   div.appendChild(Awards);
   div.appendChild(BoxOffice);
@@ -142,6 +226,7 @@ function mostrarDetalles(pelicula){
   div.appendChild(Genre);
   div.appendChild(Language);
   div.appendChild(Plot);
+  
   div.appendChild(button);
   resultado.appendChild(div);
 }
@@ -208,12 +293,13 @@ function mostrarPeliculas(peliculas){
 
 }
 function buscarDetallesToArray(url){
+  document.getElementById('loader').style.display = 'block';
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         let detallePelicula = JSON.parse(this.responseText);
         detallesPeliculas.push(detallePelicula); // Guardar los detalles de la película en el array
-        
+        document.getElementById('loader').style.display = 'none';
       }
   };
   xhttp.open("GET", url, true);
