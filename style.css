@@ -24,8 +24,9 @@ header{
 
 main{
    
-    margin-top: 10%;
+    margin-top: 5%;
 }
+
 
 #resultado{
    
@@ -178,19 +179,135 @@ main{
     align-content: center;
    
   }
-  .grafica{
-    width: 300px;
-    position: relative;
-    margin: 100px;
-    height: 100px;
-  }
-  #graficas{
+  
+  #informe{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     justify-content: center;
-    
+    align-items: center;
+    align-content: center;
+    margin-bottom:100px ;
+    text-align: center;
+   
   }
 
+  header button{
+    font-size: 10px;
+    width: 5%;
+    height: 50px;
+    top:10vh;
+    left: 30px;
+    
+    background-color: red;
+    color: white;
+    
+   
+  }
+  #informe button{
+    font-size: 10px;
+    width: 5%;
+    height: 50px;
+    top:10vh;
+    left: 30px;
+    position: fixed;
+    background-color: red;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+   
+  }
+
+  .divRating{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+   
+  }
+
+  .divRecaudacion{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+   
+  }
+
+  .divVotos{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+   
+  }
+
+  #inicio{
+    height: 90vh;
+  }
+
+  #inicio img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+ 
+  #tipo {
+    
+    width: 30%;
+    height: calc(1.5em + .75rem + 2px);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+  .form__field:focus {
+    padding-bottom: 6px;
+    font-weight: 700;
+    border-width: 3px;
+    border-image: linear-gradient(to right, red, #ef3838);
+    border-image-slice: 1;
+  }
+  .form__field {
+    font-family: inherit;
+    width: 60%;
+    border: none;
+    border-bottom: 2px solid #9b9b9b;
+    outline: 0;
+    font-size: 17px;
+    color: #fff;
+    margin: 10px;
+    background: transparent;
+    transition: border-color 0.2s;
+  }
+  
+  
 
 
   

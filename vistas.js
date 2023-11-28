@@ -5,33 +5,83 @@ function mostrarInforme(topRating, topRecaudacion, topVotos, detallesPeliculas) 
   informe.innerHTML = "";
   informe.style.display = "block";
 
+  btnCrearInforme = document.getElementById("crearInforme");
+  btnCrearInforme.style.display = "none";
+
   resultado = document.getElementById("resultado");
   resultado.style.display = "none";
-    // Crear las tablas
-    let tablaRating = crearTabla(topRating);
-    let tablaRecaudacion = crearTabla(topRecaudacion);
-    let tablaVotos = crearTabla(topVotos);
+  window.removeEventListener('scroll', miFuncionScroll);
 
-    // Agregar las tablas al documento
-   
-    informe.appendChild(tablaRating);
-   
-    informe.appendChild(document.createElement('hr'));
-    
-    
 
-    informe.appendChild(tablaRecaudacion);
-    
-    informe.appendChild(document.createElement('hr'));
-    
-    
+  if(detallesPeliculas.length == 0){
+    informe.innerHTML = "No hay datos para mostrar";
+  }
+  else{
 
-    informe.appendChild(tablaVotos);
-  
-    informe.appendChild(document.createElement('hr'));
-    
-    
-    
+      divRating = document.createElement("div");
+      divRating.className = "divRating";
+      h2Rating = document.createElement("h2");
+      h2Rating.innerHTML = "Top Rating";
+      divRating.appendChild(h2Rating);
+
+      divRecaudacion = document.createElement("div");
+      divRecaudacion.className = "divRecaudacion";
+      h2Recaudacion = document.createElement("h2");
+      h2Recaudacion.innerHTML = "Top Recaudacion";
+      divRecaudacion.appendChild(h2Recaudacion);
+
+      divVotos = document.createElement("div");
+      divVotos.className = "divVotos";
+      h2Votos = document.createElement("h2");
+      h2Votos.innerHTML = "Top Votos";
+      divVotos.appendChild(h2Votos);
+
+      
+
+      
+        // Crear las tablas
+        let tablaRating = crearTabla(topRating);
+        let tablaRecaudacion = crearTabla(topRecaudacion);
+        let tablaVotos = crearTabla(topVotos);
+
+        
+        // Agregar las tablas al documento
+      
+        divRating.appendChild(tablaRating);
+        informe.appendChild(divRating);
+        
+        informe.appendChild(document.createElement('hr'));
+        
+        
+
+        divRecaudacion.appendChild(tablaRecaudacion);
+        informe.appendChild(divRecaudacion);
+        informe.appendChild(document.createElement('hr'));
+        
+        
+
+        divVotos.appendChild(tablaVotos);
+        informe.appendChild(divVotos);
+        informe.appendChild(document.createElement('hr'));
+        
+        
+        div1 = document.createElement("div");
+        div1.id = "chart_div1";
+        divRating.appendChild(div1);
+
+        div2 = document.createElement("div");
+        div2.id = "chart_div2";
+        divRecaudacion.appendChild(div2);
+
+        div3 = document.createElement("div");
+        div3.id = "chart_div3";
+        divVotos.appendChild(div3);
+
+
+        drawChart(detallesPeliculas,"imdbRating",1);
+        drawChart(detallesPeliculas,"imdbRating",2);
+        drawChart(detallesPeliculas,"imdbVotes",3);
+  }   
 
     button = document.createElement("button");
     button.innerHTML = "volver";
@@ -40,23 +90,22 @@ function mostrarInforme(topRating, topRecaudacion, topVotos, detallesPeliculas) 
        resultado.style.display = "flex";
        informe = document.getElementById("informe");
        informe.style.display = "none";
-
+       btnCrearInforme = document.getElementById("crearInforme");
+       btnCrearInforme.style.display = "block";
+      
+       window.addEventListener('scroll', miFuncionScroll);
     });
+
+    
+
+    
+    
+    
     informe.appendChild(button);
     
-    div1 = document.createElement("div");
-    div1.id = "chart_div1";
-    informe.appendChild(div1);
-    div2 = document.createElement("div");
-    div2id = "chart_div2";
-    informe.appendChild(div2);
-    div3 = document.createElement("div");
-    div3.id = "chart_div3";
-    informe.appendChild(div3);
+    
 
-    drawChart(detallesPeliculas,"imdbRating",1);
-    //drawChart(detallesPeliculas,"BoxOffice",2);
-    drawChart(detallesPeliculas,"imdbVotes",3);
+    
 
     
     
@@ -65,34 +114,34 @@ function mostrarInforme(topRating, topRecaudacion, topVotos, detallesPeliculas) 
 
   function drawChart(detallePeliculas,atributo,div) {
 
-var arrayDatos =[];
+    var arrayDatos =[];
 
-arrayDatos.push(["Pelicula", atributo, { role: "style" } ]);
- for (peli of detallePeliculas)
-  {
-    arrayDatos.push([peli.Title, parseFloat(peli.imdbRating), "gold"]);
+    arrayDatos.push(["Pelicula", atributo, { role: "style" } ]);
+    for (peli of detallePeliculas)
+      {
+        arrayDatos.push([peli.Title, parseFloat(peli.imdbRating), "red"]);
+      }
+
+        var data = google.visualization.arrayToDataTable(arrayDatos);
+
+        var view = new google.visualization.DataView(data);
+        view.setColumns([0, 1,
+                        { calc: "stringify",
+                          sourceColumn: 1,
+                          type: "string",
+                          role: "annotation" },
+                        2]);
+
+        var options = {
+          
+          width: 1000,
+          height: 200,
+          bar: {groupWidth: "95%"},
+          legend: { position: "none" },
+        };
+        var chart = new google.visualization.ColumnChart(document.getElementById("chart_div"+div));
+        chart.draw(view, options);
   }
-
-    var data = google.visualization.arrayToDataTable(arrayDatos);
-
-    var view = new google.visualization.DataView(data);
-    view.setColumns([0, 1,
-                     { calc: "stringify",
-                       sourceColumn: 1,
-                       type: "string",
-                       role: "annotation" },
-                     2]);
-
-    var options = {
-      title: "Density of Precious Metals, in g/cm^3",
-      width: 300,
-      height: 200,
-      bar: {groupWidth: "95%"},
-      legend: { position: "none" },
-    };
-    var chart = new google.visualization.ColumnChart(document.getElementById("chart_div"+div));
-    chart.draw(view, options);
-}
 
 
 
@@ -199,53 +248,61 @@ arrayDatos.push(["Pelicula", atributo, { role: "style" } ]);
   }
 
   function mostrarPeliculas(peliculas){
-
+    inicio = document.getElementById("inicio");
+    inicio.style.display = "none";
     resultado = document.getElementById("resultado");
     
+   
+    if(peliculas.Response == "False"){
+      resultado.innerHTML = peliculas.Error;
+    }else{
       peliculas.Search.forEach(pelicula => {
   
         
   
         
-          div = document.createElement("div");
-          div.className = "pelicula";
-         p = document.createElement("p");
-          p.innerHTML = pelicula.Title;
-          img = document.createElement("img");
-          img.onload = function() {
-            
-            if (this.width + this.height === 0) {
-                this.onerror();
-            }
-          };
-          img.onerror = function() {
-             
-              this.src = 'images/imgError.jpg';
-          };
-          if (pelicula.Poster && pelicula.Poster !== 'N/A') {
-              img.src = pelicula.Poster;
-          } else {
+        div = document.createElement("div");
+        div.className = "pelicula";
+       p = document.createElement("p");
+        p.innerHTML = pelicula.Title;
+        img = document.createElement("img");
+        img.onload = function() {
+          
+          if (this.width + this.height === 0) {
+              this.onerror();
+          }
+        };
+        img.onerror = function() {
            
-              img.src = 'images/imgError.jpg';
+            this.src = 'images/imgError.jpg';
+        };
+        if (pelicula.Poster && pelicula.Poster !== 'N/A') {
+            img.src = pelicula.Poster;
+        } else {
+         
+            img.src = 'images/imgError.jpg';
+        }
+        
+
+        div.addEventListener("click", function(e) {
+
+          e.preventDefault();
+          url="https://www.omdbapi.com/?apikey=61d31509&i="+pelicula.imdbID;
+          
+          if(!MostrandoDetalles){
+            MostrandoDetalles = true;
+            buscarDetalles(url);
           }
           
-  
-          div.addEventListener("click", function(e) {
-  
-            e.preventDefault();
-            url="https://www.omdbapi.com/?apikey=6a067ea7&i="+pelicula.imdbID;
-            
-            if(!MostrandoDetalles){
-              MostrandoDetalles = true;
-              buscarDetalles(url);
-            }
-            
-          });
-  
-          div.appendChild(img);
-          div.appendChild(p);
-          
-          resultado.appendChild(div);
-      });
-  
+        });
+
+        div.appendChild(img);
+        div.appendChild(p);
+        
+        resultado.appendChild(div);
+    });
+    }
+    
+      
+    
   }

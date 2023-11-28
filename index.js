@@ -27,20 +27,21 @@ window.onload = function(){
       buscarPeliculas(e);
     });
 
-    window.addEventListener('scroll', function() {
-      if (!estaCargando && (window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          
-          estaCargando = true;
-          paginaActual++;
-          buscarPeliculas();
-      }
-    });
+    window.addEventListener('scroll', miFuncionScroll);
 
     crearInforme = document.getElementById("crearInforme");
     crearInforme.addEventListener("click",Informes );
 
     google.charts.load("current", {packages:['corechart']});
   
+}
+
+function miFuncionScroll() {
+  if (!estaCargando && (window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+      estaCargando = true;
+      paginaActual++;
+      buscarPeliculas();
+  }
 }
 
 function Informes() {
@@ -86,7 +87,7 @@ let peliculasPorVotos = detallesPeliculasCopiaVotos.sort((a, b) => {
 function buscarPeliculas(e){
     if(e){e.preventDefault();} 
     if (document.getElementById("titulo").value.length > 2) {
-        url="https://www.omdbapi.com/?apikey=f64125b5&s="+document.getElementById("titulo").value+"&type="+document.getElementById("tipo").value +"&page="+paginaActual;
+        url="https://www.omdbapi.com/?apikey=61d31509&s="+document.getElementById("titulo").value+"&type="+document.getElementById("tipo").value +"&page="+paginaActual;
         ajax(url);
       }
 }
@@ -130,7 +131,7 @@ function peliculasToArray(peliculas){
   peliculas.Search.forEach(pelicula => {
 
     peliculasArray.push(pelicula);
-    let url = `https://www.omdbapi.com/?apikey=f64125b5&i=${pelicula.imdbID}`;
+    let url = `https://www.omdbapi.com/?apikey=61d31509&i=${pelicula.imdbID}`;
     buscarDetallesToArray(url);
   });
 }
