@@ -5,11 +5,15 @@ function mostrarInforme(topRating, topRecaudacion, topVotos, detallesPeliculas) 
   informe.innerHTML = "";
   informe.style.display = "block";
 
+  inicio = document.getElementById("inicio");
+    inicio.style.display = "none";
+
   btnCrearInforme = document.getElementById("crearInforme");
   btnCrearInforme.style.display = "none";
 
   resultado = document.getElementById("resultado");
   resultado.style.display = "none";
+
   window.removeEventListener('scroll', miFuncionScroll);
 
 
