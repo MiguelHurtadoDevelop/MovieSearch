@@ -78,6 +78,7 @@ main{
 
 
 
+
 .detalles{
     width: 30%;
     padding: 5%;
@@ -165,6 +166,30 @@ main{
     }
   }
 
+  #informe{
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+   
+  }
+  .grafica{
+    width: 300px;
+    position: relative;
+    margin: 100px;
+    height: 100px;
+  }
+  #graficas{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    
+  }
 
 
 
